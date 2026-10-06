@@ -1,0 +1,7 @@
+{
+  "texture_name": "textures/pyromancer.png",
+  "columns": 10,
+  "rows": 5,
+  "start_frame": 20,
+  "total_frames": 3
+}

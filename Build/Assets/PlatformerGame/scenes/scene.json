@@ -1,0 +1,274 @@
+{
+	"actors": [
+		{
+			"type": "Actor",
+			"name": "Level1",
+			"tag": "Ground",
+			"active": true,
+			"prototype": true,
+			"persistent": false,
+			"transform": {
+				"position": [ 0, 0 ],
+				"rotation": 0.0,
+				"scale": 4.0
+			},
+			"components": [
+				{
+					"type": "TilemapRendererComponent",
+					"tilemap_name": "tilemaps/level1.json",
+					"player_spawn": [ 400, 500 ],
+					"goal_spawn": [ 1750, 500 ]
+				}
+			]
+		},
+
+		{
+			"type": "Actor",
+			"name": "Level2",
+			"tag": "Ground",
+			"active": true,
+			"prototype": true,
+			"persistent": false,
+			"transform": {
+				"position": [ 0, 0 ],
+				"rotation": 0.0,
+				"scale": 4.0
+			},
+			"components": [
+				{
+					"type": "TilemapRendererComponent",
+					"tilemap_name": "tilemaps/level2.json",
+					"player_spawn": [ 400, 500 ],
+					"goal_spawn": [ 1750, 500 ]
+				}
+			]
+		},
+
+		{
+			"type": "Actor",
+			"name": "Level3",
+			"tag": "Ground",
+			"active": true,
+			"prototype": true,
+			"persistent": false,
+			"transform": {
+				"position": [ 0, 0 ],
+				"rotation": 0.0,
+				"scale": 4.0
+			},
+			"components": [
+				{
+					"type": "TilemapRendererComponent",
+					"tilemap_name": "tilemaps/level3.json",
+					"player_spawn": [ 400, 500 ],
+					"goal_spawn": [ 1750, 500 ]
+				}
+			]
+		},
+
+		{
+			"_comment": "the enemy",
+			"type": "EnemyController",
+			"name": "EyePrototype",
+			"tag": "Enemy",
+			"prototype": true,
+			"active": true,
+			"health": 4,
+			"speed": 200,
+			"transform": {
+				"position": [ 1000, 100 ],
+				"rotation": 0,
+				"scale": 4
+			},
+			"components": [
+				{
+					"type": "Box2DPhysicsComponent",
+					"linear_damping": 5,
+					"constrain_angle": true,
+					"size": [ 24, 24 ],
+					"shape": "circle",
+					"restitution": 0,
+					"mass": 2,
+					"gravity_scale": 0,
+					"is_sensor": true
+				},
+				{
+					"type": "SpriteAnimatorComponent",
+					"default_animation": "idle",
+					"animations": [
+						{
+							"name": "idle",
+							"texture_frames": "animations/eye_idle.json",
+							"fps": 10.0,
+							"loop": true
+						},
+						{
+							"name": "hurt",
+							"texture_frames": "animations/eye_hit.json",
+							"fps": 6.0,
+							"loop": false
+						},
+						{
+							"name": "attack",
+							"texture_frames": "animations/eye_attack.json",
+							"fps": 10.0,
+							"loop": false
+						}
+					]
+				}
+			]
+		},
+
+		{
+			"_comment": "the player character",
+			"type": "PlayerController",
+			"name": "PlayerPrototype",
+			"tag": "Player",
+			"prototype": true,
+			"active": true,
+			"health": 3,
+			"knockback": 75,
+			"speed": 250,
+			"jump": 1500,
+			"transform": {
+				"position": [ 500, 100 ],
+				"rotation": 0,
+				"scale": 4
+			},
+			"components": [
+				{
+					"type": "Box2DPhysicsComponent",
+					"linear_damping": 5,
+					"constrain_angle": true,
+					"size": [ 24, 40 ],
+					"gravity_scale": 3,
+					"shape": "capsule",
+					"restitution": 0,
+					"mass": 3
+				},
+				{
+					"type": "SpriteAnimatorComponent",
+					"default_animation": "idle",
+					"animations": [
+						{
+							"name": "idle",
+							"texture_frames": "animations/knight_idle.json",
+							"fps": 10.0,
+							"loop": true
+						},
+						{
+							"name": "run",
+							"texture_frames": "animations/knight_run.json",
+							"fps": 10.0,
+							"loop": true
+						},
+						{
+							"name": "jump",
+							"texture_frames": "animations/knight_jump.json",
+							"fps": 16.0,
+							"loop": false
+						},
+						{
+							"name": "fall",
+							"texture_frames": "animations/knight_fall.json",
+							"fps": 1.0,
+							"loop": false
+						},
+						{
+							"name": "attack1",
+							"texture_frames": "animations/knight_attack1.json",
+							"fps": 14.0,
+							"loop": false
+						},
+						{
+							"name": "attack2",
+							"texture_frames": "animations/knight_attack2.json",
+							"fps": 16.0,
+							"loop": false
+						},
+						{
+							"name": "attack3",
+							"texture_frames": "animations/knight_attack3.json",
+							"fps": 12.0,
+							"loop": false
+						},
+						{
+							"name": "hurt",
+							"texture_frames": "animations/knight_hurt.json",
+							"fps": 10.0,
+							"loop": false
+						},
+						{
+							"name": "dead",
+							"texture_frames": "animations/knight_dead.json",
+							"fps": 10.0,
+							"loop": false
+						}
+					]
+				}
+			]
+		},
+
+		{
+			"_comment": "default attack hitbox, tag/size can be changed depending on who's sending it",
+			"type": "Damager",
+			"name": "DamagerPrototype",
+			"tag": "Enemy",
+			"prototype": true,
+			"active": true,
+			"_comment2": "the enemy doesn't actually use the damage modifier only the player does, the player takes damage depending on the tag",
+			"damage": 2,
+			"life": 0.25,
+			"transform": {
+				"position": [ 0, 0 ],
+				"rotation": 0,
+				"scale": 2
+			},
+			"components": [
+				{
+					"type": "Box2DPhysicsComponent",
+					"is_sensor": true,
+					"shape": "circle",
+					"size": [ 64, 64 ],
+					"gravity_scale": 0
+				}
+			]
+		},
+
+		{
+			"_comment": "technically just a coin but I needed something to serve as the goal",
+			"type": "GoalController",
+			"name": "GoalPrototype",
+			"tag": "Goal",
+			"prototype": true,
+			"active": true,
+			"transform": {
+				"position": [ 0, 0 ],
+				"rotation": 0,
+				"scale": 12
+			},
+			"components": [
+				{
+					"type": "SpriteAnimatorComponent",
+					"default_animation": "idle",
+					"animations": [
+						{
+							"name": "idle",
+							"texture_frames": "animations/goal.json",
+							"fps": 10.0,
+							"loop": true
+						}
+					]
+				},
+				{
+					"type": "Box2DPhysicsComponent",
+					"is_sensor": true,
+					"shape": "circle",
+					"size": [ 16, 16 ],
+					"gravity_scale": 0
+
+				}
+			]
+		}
+	]
+}

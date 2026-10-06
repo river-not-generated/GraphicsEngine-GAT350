@@ -1,0 +1,7 @@
+{
+  "texture_name": "textures/bat.png",
+  "columns": 4,
+  "rows": 1,
+  "start_frame": 1,
+  "total_frames": 3
+}

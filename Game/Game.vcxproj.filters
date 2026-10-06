@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="SpaceGame">
+      <UniqueIdentifier>{fb287e48-b698-4b5f-97bd-2787e117b1df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PlatformerGame">
+      <UniqueIdentifier>{7b299f91-36a1-4269-985a-90980257d57f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SpaceGame\Assets">
+      <UniqueIdentifier>{7326bbff-b162-4c77-9628-56a28927d0f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SpaceGame\Assets\Animations">
+      <UniqueIdentifier>{78c6c46e-722f-4b0b-806c-1c12c0294238}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SpaceGame\Assets\Scenes">
+      <UniqueIdentifier>{92d957a4-949c-401b-bf7d-a35c78609bb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SpaceGame\Assets\Tilemap">
+      <UniqueIdentifier>{e57ba7c7-6e39-4d1e-b0b0-64825c65f84c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PlatformerGame\Assets">
+      <UniqueIdentifier>{f6009697-ee33-4ea1-b1c2-bb0f9e1d6e34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PlatformerGame\Assets\Animations">
+      <UniqueIdentifier>{b526074f-7905-4607-9528-6ef0066981f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PlatformerGame\Assets\Scenes">
+      <UniqueIdentifier>{a2215d89-5e40-4318-9e95-12e4999b9759}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PlatformerGame\Assets\Tilemap">
+      <UniqueIdentifier>{83bb59ce-9849-4721-a9cf-7bff91f10787}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PlatformerGame\Actors">
+      <UniqueIdentifier>{da811265-f03a-4486-bb3d-23d8dbb0b5d2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="SpaceGame\Assets.cpp">
+      <Filter>SpaceGame</Filter>
+    </ClCompile>
+    <ClCompile Include="SpaceGame\Bullet.cpp">
+      <Filter>SpaceGame</Filter>
+    </ClCompile>
+    <ClCompile Include="SpaceGame\Enemy.cpp">
+      <Filter>SpaceGame</Filter>
+    </ClCompile>
+    <ClCompile Include="SpaceGame\Player.cpp">
+      <Filter>SpaceGame</Filter>
+    </ClCompile>
+    <ClCompile Include="SpaceGame\Powerup.cpp">
+      <Filter>SpaceGame</Filter>
+    </ClCompile>
+    <ClCompile Include="SpaceGame\SpaceGame.cpp">
+      <Filter>SpaceGame</Filter>
+    </ClCompile>
+    <ClCompile Include="Platformer\PlatformerGame.cpp">
+      <Filter>PlatformerGame</Filter>
+    </ClCompile>
+    <ClCompile Include="Platformer\CharacterBase.cpp">
+      <Filter>PlatformerGame\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Platformer\Damager.cpp">
+      <Filter>PlatformerGame\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Platformer\PlayerController.cpp">
+      <Filter>PlatformerGame\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Platformer\EnemyController.cpp">
+      <Filter>PlatformerGame\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Platformer\GoalController.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SpaceGame\Assets.h">
+      <Filter>SpaceGame</Filter>
+    </ClInclude>
+    <ClInclude Include="SpaceGame\Bullet.h">
+      <Filter>SpaceGame</Filter>
+    </ClInclude>
+    <ClInclude Include="SpaceGame\Enemy.h">
+      <Filter>SpaceGame</Filter>
+    </ClInclude>
+    <ClInclude Include="SpaceGame\Player.h">
+      <Filter>SpaceGame</Filter>
+    </ClInclude>
+    <ClInclude Include="SpaceGame\Powerup.h">
+      <Filter>SpaceGame</Filter>
+    </ClInclude>
+    <ClInclude Include="SpaceGame\SpaceGame.h">
+      <Filter>SpaceGame</Filter>
+    </ClInclude>
+    <ClInclude Include="Platformer\PlatformerGame.h">
+      <Filter>PlatformerGame</Filter>
+    </ClInclude>
+    <ClInclude Include="Platformer\CharacterBase.h">
+      <Filter>PlatformerGame\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Platformer\Damager.h">
+      <Filter>PlatformerGame\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Platformer\PlayerController.h">
+      <Filter>PlatformerGame\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Platformer\EnemyController.h">
+      <Filter>PlatformerGame\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Platformer\GoalController.h">
+      <Filter>PlatformerGame\Actors</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Build\Assets\SpaceGame\data\scene.json">
+      <Filter>SpaceGame\Assets\Scenes</Filter>
+    </None>
+    <None Include="..\Build\Assets\SpaceGame\animations\bat_idle.json">
+      <Filter>SpaceGame\Assets\Animations</Filter>
+    </None>
+    <None Include="..\Build\Assets\SpaceGame\tilemaps\world.json">
+      <Filter>SpaceGame\Assets\Tilemap</Filter>
+    </None>
+    <None Include="..\Build\Assets\PlatformerGame\scenes\scene.json">
+      <Filter>PlatformerGame\Assets\Scenes</Filter>
+    </None>
+    <None Include="..\Build\Assets\PlatformerGame\animations\bat_idle.json">
+      <Filter>PlatformerGame\Assets\Animations</Filter>
+    </None>
+    <None Include="..\Build\Assets\PlatformerGame\tilemaps\level1.json">
+      <Filter>PlatformerGame\Assets\Tilemap</Filter>
+    </None>
+    <None Include="..\Build\Assets\PlatformerGame\tilemaps\level2.json">
+      <Filter>PlatformerGame\Assets\Tilemap</Filter>
+    </None>
+    <None Include="..\Build\Assets\PlatformerGame\tilemaps\level3.json">
+      <Filter>PlatformerGame\Assets\Tilemap</Filter>
+    </None>
+  </ItemGroup>
+</Project>
