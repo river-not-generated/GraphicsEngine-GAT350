@@ -1,8 +1,5 @@
 #include "Engine.h"
 
-#include "SpaceGame/SpaceGame.h"
-#include "Platformer/PlatformerGame.h"
-
 #include <iostream>
 #include <vector>
 #include <random>
@@ -17,10 +14,6 @@ int main()
 {   
     // initialize the engine
     if (Engine::Get().Initialize(WIN_WIDTH, WIN_HEIGHT) == false) return 0;
-
-    unique_ptr<PlatformerGame> game = make_unique<PlatformerGame>();
-
-    game->Initialize();
 
     SDL_Event e;
     bool quit = false;
@@ -37,19 +30,14 @@ int main()
         Engine::Get().Update();
         float dt = Engine::Get().GetTime().GetDeltaTime();
 
-        game->Update(dt);
-
         Engine::Get().GetRenderer().SetColour(0, 0, 0);
         Engine::Get().GetRenderer().Clear(); // clear the renderer
-
-        game->Draw(Engine::Get().GetRenderer());
 
         Engine::Get().GetPS().Draw(Engine::Get().GetRenderer());
 
         Engine::Get().GetRenderer().Present(); // render the screen
     }
 
-    game.reset();
     // shut down the program cleanly upon exiting
     Engine::Get().Shutdown();
 
