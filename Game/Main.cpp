@@ -30,12 +30,11 @@ int main()
         Engine::Get().Update();
         float dt = Engine::Get().GetTime().GetDeltaTime();
 
-        Engine::Get().GetRenderer().SetColour(0, 0, 0);
-        Engine::Get().GetRenderer().Clear(); // clear the renderer
+        Engine::Get().GetRenderer().BeginFrame(); // clear
 
         Engine::Get().GetPS().Draw(Engine::Get().GetRenderer());
 
-        Engine::Get().GetRenderer().Present(); // render the screen
+        Engine::Get().GetRenderer().EndFrame(); // and present
     }
 
     // shut down the program cleanly upon exiting

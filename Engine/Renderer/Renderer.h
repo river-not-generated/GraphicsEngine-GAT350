@@ -14,6 +14,9 @@ namespace nu
 		void Clear();
 		void Present();
 
+		bool BeginFrame();
+		bool EndFrame() const;
+
 		float GetWindowWidth() { return m_width; }
 		float GetWindowHeight() { return m_height; }
 
@@ -47,6 +50,10 @@ namespace nu
 	private:
 		SDL_Window* m_window = nullptr;
 		SDL_Renderer* m_renderer = nullptr;
+
+		SDL_GPUDevice* m_gpuDevice = nullptr;
+		SDL_GPUCommandBuffer* m_cmdBuffer = nullptr;
+		SDL_GPURenderPass* m_renderPass = nullptr;
 
 		float m_width = 1024.0f;
 		float m_height = 1080.0f;
