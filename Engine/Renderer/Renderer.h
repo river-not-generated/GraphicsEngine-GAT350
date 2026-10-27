@@ -15,7 +15,7 @@ namespace nu
 		void Present();
 
 		bool BeginFrame();
-		bool EndFrame() const;
+		bool EndFrame();
 
 		float GetWindowWidth() { return m_width; }
 		float GetWindowHeight() { return m_height; }
@@ -31,8 +31,6 @@ namespace nu
 		void DrawRect(const SDL_FRect* rect) const;
 		void DrawLine(float x1, float y1, float x2, float y2) const;
 
-		void DrawModel(const class Model& model, const struct Transform& trans) const;
-
 		void DrawTexture(const class Texture& texture, float x, float y, float angle = 0.0f, float scale = 1.0f, bool flipH = false) const;
 		void DrawTexture(const class Texture& texture, const struct Transform& trans, bool flipH = false, const Vector2& origin = { 0.5f, 0.5f }) const;
 		void DrawTexture(const class Texture& texture, const struct Rect& source, const struct Transform& trans, bool flipH = false, const Vector2& origin = { 0.5f, 0.5f }) const;
@@ -40,12 +38,36 @@ namespace nu
 
 		void DrawDebugText(float x, float y, const char* text) const;
 
+		// SDL GPU
+
+		SDL_GPUDevice* GetGPUDevice() const { return m_gpuDevice; }
+		SDL_Window* GetWindow() const { return m_window; }
+
+		void SetPipeline(const class Pipeline& pipeline);
+		void SetVertexBuffer(const class VertexBuffer& vertexBuffer);
+		void SetIndexBuffer(const class IndexBuffer& indexBuffer);
+
+		void Draw(uint32_t vertexCount);
+
+		void DrawIndex(const class IndexBuffer& indexBuffer);
+
+		void SetVertexUniform(uint32_t slot, const void* data, uint32_t size);
+		void SetFragmentUniform(uint32_t slot, const void* data, uint32_t size);
+		void SetFragmentTexture(uint32_t slot, const class Texture& texture);
+
+		// THE Z BUFFER
+		void CreateDepthBuffer();
+
+
 		void Delay(int ms);
 
 		void Shutdown();
 
 		friend class Text;
 		friend class Texture;
+		friend class Shader;
+		friend class VertexBuffer;
+		friend class IndexBuffer;
 
 	private:
 		SDL_Window* m_window = nullptr;
@@ -54,6 +76,8 @@ namespace nu
 		SDL_GPUDevice* m_gpuDevice = nullptr;
 		SDL_GPUCommandBuffer* m_cmdBuffer = nullptr;
 		SDL_GPURenderPass* m_renderPass = nullptr;
+
+		SDL_GPUTexture* m_depthTexture = nullptr;
 
 		float m_width = 1024.0f;
 		float m_height = 1080.0f;

@@ -3,4 +3,9 @@
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{93ceac8f-8ffe-44ec-bb4b-a93c804bf589}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
 </Project>

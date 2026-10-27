@@ -51,13 +51,13 @@ namespace nu {
         const Transform& GetTransform() const {
             return m_transform;
         }
-        void SetPosition(const Vector2& position) {
+        void SetPosition(const glm::vec3& position) {
             m_transform.position = position;
         }
-        void SetRotation(float rotation) {
+        void SetRotation(const glm::vec3& rotation) {
             m_transform.rotation = rotation;
         }
-        void SetScale(float scale) {
+        void SetScale(const glm::vec3& scale) {
             m_transform.scale = scale;
         }
 

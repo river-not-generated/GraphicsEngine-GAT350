@@ -13,11 +13,12 @@
 #include "Resources/ResourceManager.h"
 
 #include "Renderer/Renderer.h"
+#include "Renderer/Shader.h"
+#include "Renderer/Pipeline.h"
+#include "Renderer/VertexBuffer.h"
 #include "Input/Input.h"
 #include "Core/GameTime.h"
 #include "Framework/Game.h"
-#include "Renderer/ParticleSystem.h"
-#include "Physics/Physics.h"
 #include "Serialization/Json.h"
 
 #include "Framework/Actor.h"
@@ -41,9 +42,6 @@ namespace nu
 			Renderer& GetRenderer() { return m_renderer; }
 			Time& GetTime() { return m_time; }
 			Audio& GetAudio() { return m_audio; }
-			ParticleSystem& GetPS() { return m_particleSystem; }
-			Physics& GetPhysics() { return m_physics; }
-
 
 			Engine(const Engine&) = delete;
 			Engine& operator = (const Engine&) = delete;
@@ -56,8 +54,6 @@ namespace nu
 			Renderer m_renderer;
 			Time m_time;
 			Audio m_audio;
-			ParticleSystem m_particleSystem;
-			Physics m_physics;
 	};
 }
 

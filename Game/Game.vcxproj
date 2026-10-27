@@ -93,15 +93,19 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>;$(SolutionDir)ThirdParty\rapidjson\include;$(SolutionDir)ThirdParty\box2d\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\SDL3\include;$(SolutionDir)ThirdParty\fmod\core\inc;$(SolutionDir)ThirdParty\rapidjson\include;$(SolutionDir)ThirdParty\box2d\include;$(SolutionDir)ThirdParty\glm;$(SolutionDir)ThirdParty\assimp\include;$(SolutionDir)Engine\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>sdl3.lib;sdl3_ttf.lib;sdl3_image.lib;box2dd.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\SDL3\lib\$(PlatformTarget)\;$(SolutionDir)ThirdParty\box2d\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sdl3.lib;sdl3_ttf.lib;sdl3_image.lib;box2dd.lib;assimp-vc143-mt.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\SDL3\lib\$(PlatformTarget)\;$(SolutionDir)ThirdParty\box2d\lib;$(SolutionDir)ThirdParty\assimp\lib\$(PlatformTarget)</AdditionalLibraryDirectories>
       <AdditionalOptions>/WHOLEARCHIVE:Engine.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -111,15 +115,19 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>;$(SolutionDir)ThirdParty\rapidjson\include;$(SolutionDir)ThirdParty\box2d\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\SDL3\include;$(SolutionDir)ThirdParty\fmod\core\inc;$(SolutionDir)ThirdParty\rapidjson\include;$(SolutionDir)ThirdParty\box2d\include;$(SolutionDir)ThirdParty\glm;$(SolutionDir)ThirdParty\assimp\include;$(SolutionDir)Engine\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>sdl3.lib;sdl3_ttf.lib;sdl3_image.lib;box2dd.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\SDL3\lib\$(PlatformTarget)\;$(SolutionDir)ThirdParty\box2d\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sdl3.lib;sdl3_ttf.lib;sdl3_image.lib;box2dd.lib;assimp-vc143-mt.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\SDL3\lib\$(PlatformTarget)\;$(SolutionDir)ThirdParty\box2d\lib;$(SolutionDir)ThirdParty\assimp\lib\$(PlatformTarget)</AdditionalLibraryDirectories>
       <AdditionalOptions>/WHOLEARCHIVE:Engine.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -127,16 +135,20 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Engine;$(SolutionDir)ThirdParty\SDL3\include;$(SolutionDir)ThirdParty\FMOD\core\inc;%(AdditionalIncludeDirectories);$(SolutionDir)ThirdParty\rapidjson\include;$(SolutionDir)ThirdParty\box2d\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\SDL3\include;$(SolutionDir)ThirdParty\fmod\core\inc;$(SolutionDir)ThirdParty\rapidjson\include;$(SolutionDir)ThirdParty\box2d\include;$(SolutionDir)ThirdParty\glm;$(SolutionDir)ThirdParty\assimp\include;$(SolutionDir)Engine\</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\SDL3\lib\$(PlatformTarget)\;$(SolutionDir)ThirdParty\box2d\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sdl3.lib;sdl3_ttf.lib;sdl3_image.lib;box2dd.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\SDL3\lib\$(PlatformTarget)\;$(SolutionDir)ThirdParty\box2d\lib;$(SolutionDir)ThirdParty\assimp\lib\$(PlatformTarget)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sdl3.lib;sdl3_ttf.lib;sdl3_image.lib;box2dd.lib;assimp-vc143-mt.lib</AdditionalDependencies>
       <AdditionalOptions>/WHOLEARCHIVE:Engine.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -146,15 +158,19 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>;$(SolutionDir)ThirdParty\rapidjson\include;$(SolutionDir)ThirdParty\box2d\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\SDL3\include;$(SolutionDir)ThirdParty\fmod\core\inc;$(SolutionDir)ThirdParty\rapidjson\include;$(SolutionDir)ThirdParty\box2d\include;$(SolutionDir)ThirdParty\glm;$(SolutionDir)ThirdParty\assimp\include;$(SolutionDir)Engine\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>sdl3.lib;sdl3_ttf.lib;sdl3_image.lib;box2dd.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\SDL3\lib\$(PlatformTarget)\;$(SolutionDir)ThirdParty\box2d\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sdl3.lib;sdl3_ttf.lib;sdl3_image.lib;box2dd.lib;assimp-vc143-mt.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\SDL3\lib\$(PlatformTarget)\;$(SolutionDir)ThirdParty\box2d\lib;$(SolutionDir)ThirdParty\assimp\lib\$(PlatformTarget)</AdditionalLibraryDirectories>
       <AdditionalOptions>/WHOLEARCHIVE:Engine.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
@@ -162,6 +178,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Engine\Engine.vcxproj">
       <Project>{a5f3bc20-b210-4a3f-824e-ffb80f2f168a}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Shaders\Shaders.vcxproj">
+      <Project>{1dc1933f-925a-3eb9-ac2e-61b6862b1f0c}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

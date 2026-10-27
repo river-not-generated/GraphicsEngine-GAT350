@@ -1,20 +1,36 @@
 #pragma once
 
-#include "Math/Vector2.h"
 #include "Serialization/Json.h"
+#include "MathUtils.h"
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/euler_angles.hpp>
+#include <glm/gtx/transform.hpp>
 
 namespace nu
 {
     struct Transform 
     {
-        Vector2 position = { 0.0f, 0.0f };
-        float rotation = 0.0f;
-        float scale = 1.0f;
+        glm::vec3 position{ 0.0f };
+        glm::vec3 rotation{ 0.0f };
+        glm::vec3 scale{ 1.0f };
+
+        glm::mat4 matrix;
+
+        const glm::mat4 GetMatrix() {
+            auto mxt = glm::translate(position);
+            auto mxr = glm::eulerAngleYXZ(rotation.y * math::DEG_TO_RAD, rotation.x * math::DEG_TO_RAD, rotation.z * math::DEG_TO_RAD);
+            auto mxs = glm::scale(scale);
+            matrix = mxt * mxr * mxs;
+
+            return matrix;
+        }
 
         void Read(const json::value_t& value) {
-            JSON_READ(value, position);
-            JSON_READ(value, rotation);
-            JSON_READ(value, scale);
+            //JSON_READ(value, position);
+            //JSON_READ(value, rotation);
+            //JSON_READ(value, scale);
         }
     };
 }

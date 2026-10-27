@@ -6,6 +6,10 @@
 #include "Math/MathUtils.h"
 #include "Texture.h"
 #include "Math/Rect.h"
+#include "Pipeline.h"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
+#include "Shader.h"
 
 
 namespace nu
@@ -46,6 +50,8 @@ namespace nu
         // print out the driver being utilized (e.g., "vulkan" or "d3d12")
         std::cout << "GPU Driver Initialized: " << SDL_GetGPUDeviceDriver(m_gpuDevice) << std::endl;
 
+        CreateDepthBuffer();
+
         return true;
     }
 
@@ -79,26 +85,78 @@ namespace nu
             // configure the color target attachments (This handles clearing the screen)
             SDL_GPUColorTargetInfo color_target_info{};
             color_target_info.texture = swapchainTexture;
-            color_target_info.clear_color = SDL_FColor{ 0.5f, 0.0f, 0.0f, 1.0f };
+            color_target_info.clear_color = SDL_FColor{ 0.3f, 0.3f, 0.3f, 1.0f };
             color_target_info.load_op = SDL_GPU_LOADOP_CLEAR;
             color_target_info.store_op = SDL_GPU_STOREOP_STORE;
 
-            m_renderPass = SDL_BeginGPURenderPass(m_cmdBuffer, &color_target_info, 1, nullptr);
-            SDL_EndGPURenderPass(m_renderPass);
+            // configure the depth target (This handles the depth sorting)
+            SDL_GPUDepthStencilTargetInfo depthTargetInfo = {
+                .texture = m_depthTexture,
+                .clear_depth = 1.0f,
+                .load_op = SDL_GPU_LOADOP_CLEAR,
+                .store_op = SDL_GPU_STOREOP_DONT_CARE,
+                .stencil_load_op = SDL_GPU_LOADOP_DONT_CARE,
+                .stencil_store_op = SDL_GPU_STOREOP_DONT_CARE
+            };
+
+            m_renderPass = SDL_BeginGPURenderPass(m_cmdBuffer, &color_target_info, 1, &depthTargetInfo);
         }
 
         return true;
     }
 
-    bool Renderer::EndFrame() const
+    bool Renderer::EndFrame()
     {
+        if (m_renderPass)
+        {
+            SDL_EndGPURenderPass(m_renderPass);
+            m_renderPass = nullptr;
+        }
+
         if (!SDL_SubmitGPUCommandBuffer(m_cmdBuffer))
         {
             std::cerr << "Could not submit command buffer: " << SDL_GetError() << std::endl;
             return false;
         }
 
+        m_cmdBuffer = nullptr;
+
         return true;
+    }
+
+    void Renderer::SetPipeline(const Pipeline& pipeline)
+    {
+        SDL_BindGPUGraphicsPipeline(m_renderPass, pipeline.m_gpuPipeline);
+    }
+
+    void Renderer::SetVertexBuffer(const VertexBuffer& vertexBuffer)
+    {
+        SDL_GPUBufferBinding binding{
+            .buffer = {vertexBuffer.m_gpuBuffer}, // todo: the vertex buffer's gpu buffer
+            .offset = 0   // start reading at the beginning of the buffer
+        };
+
+        SDL_BindGPUVertexBuffers(m_renderPass, 0, &binding, 1);
+    }
+
+    void Renderer::SetIndexBuffer(const IndexBuffer& indexBuffer)
+    {
+        SDL_GPUBufferBinding binding{
+            .buffer = {indexBuffer.m_gpuBuffer},
+            .offset = 0 
+        };
+
+        SDL_BindGPUIndexBuffer(m_renderPass, &binding, SDL_GPU_INDEXELEMENTSIZE_32BIT);
+    }
+
+    void Renderer::Draw(uint32_t vertexCount)
+    {
+        SDL_DrawGPUPrimitives(m_renderPass, vertexCount, 1, 0, 0);
+    }
+
+    void Renderer::DrawIndex(const IndexBuffer& indexBuffer)
+    {
+        SDL_DrawGPUIndexedPrimitives(m_renderPass, indexBuffer.GetIndexCount(), 1, 0, 0, 0);
     }
 
 
@@ -141,86 +199,45 @@ namespace nu
         SDL_RenderLine(m_renderer, x1, y1, x2, y2);
     }
 
-    void Renderer::DrawModel(const class Model& model, const struct Transform& trans) const {
-        for (auto mesh : model.GetMeshes()) {
-
-            auto& points = mesh.GetPoints();
-            SetColour((Uint8)mesh.GetColour().r, (Uint8)mesh.GetColour().g, (Uint8)mesh.GetColour().b);
-
-            for (int i = 0; i + 1 < points.size(); i++) {
-                Vector2 v1 = points.at(i);
-                Vector2 v2 = points.at(i + 1);
-
-                // convert to world space
-                v1 *= trans.scale;
-                v2 *= trans.scale;
-
-                v1 = v1.Rotate(trans.rotation * math::DEG_TO_RAD);
-                v2 = v2.Rotate(trans.rotation * math::DEG_TO_RAD);
-
-                v1 += trans.position;
-                v2 += trans.position;
-
-                DrawLine(v1.x, v1.y, v2.x, v2.y);
-            }
-        }
-    }
-
-
-    void Renderer::DrawTexture(const Texture& texture, float x, float y, float angle, float scale, bool flipH) const
-    {
-        Vector2 size = texture.GetSize();
-
-        SDL_FRect destRect;
-        destRect.x = x;
-        destRect.y = y;
-        destRect.w = size.x * scale;
-        destRect.h = size.y * scale;
-
-        SDL_SetTextureScaleMode(texture.m_texture, SDL_SCALEMODE_NEAREST);
-        SDL_RenderTextureRotated(m_renderer, texture.m_texture, NULL, &destRect, angle, NULL, (flipH ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE));
-    }
-
-    void Renderer::DrawTexture(const Texture& texture, const Transform& trans, bool flipH, const Vector2& origin) const {
-        Vector2 size = texture.GetSize();
-
-        SDL_FRect destRect;
-        destRect.w = size.x * trans.scale;
-        destRect.h = size.y * trans.scale;
-        destRect.x = trans.position.x - (destRect.w * origin.x);
-        destRect.y = trans.position.y - (destRect.h * origin.y);
-
-        SDL_SetTextureScaleMode(texture.m_texture, SDL_SCALEMODE_NEAREST);
-        SDL_RenderTextureRotated(m_renderer, texture.m_texture, NULL, &destRect, trans.rotation, NULL, (flipH ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE));
-    }
-
-
-    void Renderer::DrawTexture(const Texture& texture, const Rect& source, const Vector2& position, float rotation, float scale, bool flipH, const Vector2& origin) const
-    {
-        SDL_FRect sourceRect;
-        sourceRect.x = source.x;
-        sourceRect.y = source.y;
-        sourceRect.w = source.w;
-        sourceRect.h = source.h;
-
-        SDL_FRect destRect;
-        destRect.w = sourceRect.w * scale;
-        destRect.h = sourceRect.h * scale;
-        destRect.x = position.x - (destRect.w * origin.x);
-        destRect.y = position.y - (destRect.h * origin.y);
-
-        SDL_SetTextureScaleMode(texture.m_texture, SDL_SCALEMODE_NEAREST);
-        SDL_RenderTextureRotated(m_renderer, texture.m_texture, &sourceRect, &destRect, rotation, NULL, (flipH ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE));
-    }
-
-    void Renderer::DrawTexture(const class Texture& texture, const struct Rect& source, const struct Transform& trans, bool flipH, const Vector2& origin) const
-    {
-        DrawTexture(texture, source, trans.position, trans.rotation, trans.scale, flipH, origin);
-    }
-
     void Renderer::DrawDebugText(float x, float y, const char* text) const
     {
         SDL_RenderDebugText(m_renderer, x, y, text);
+    }
+
+    void Renderer::SetVertexUniform(uint32_t slot, const void* data, uint32_t size)
+    {
+        SDL_PushGPUVertexUniformData(m_cmdBuffer, slot, data, size);
+
+    }
+
+    void Renderer::SetFragmentUniform(uint32_t slot, const void* data, uint32_t size)
+    {
+        SDL_PushGPUFragmentUniformData(m_cmdBuffer, slot, data, size);
+    }
+
+    void Renderer::SetFragmentTexture(uint32_t slot, const Texture& texture)
+    {
+        SDL_GPUTextureSamplerBinding binding{
+            .texture = texture.m_gpuTexture,
+            .sampler = texture.m_gpuSampler
+        };
+        SDL_BindGPUFragmentSamplers(m_renderPass, slot, &binding, 1);
+    }
+
+    void Renderer::CreateDepthBuffer()
+    {
+        SDL_GPUTextureCreateInfo depthInfo{
+            .type = SDL_GPU_TEXTURETYPE_2D,
+            .format = SDL_GPU_TEXTUREFORMAT_D32_FLOAT,
+            .usage = SDL_GPU_TEXTUREUSAGE_DEPTH_STENCIL_TARGET,
+            .width = (uint32_t) m_width,
+            .height = (uint32_t) m_height,
+            .layer_count_or_depth = 1,
+            .num_levels = 1,
+            .sample_count = SDL_GPU_SAMPLECOUNT_1
+        };
+
+        m_depthTexture = SDL_CreateGPUTexture(m_gpuDevice, &depthInfo);
     }
 
     void Renderer::Delay(int ms) {
