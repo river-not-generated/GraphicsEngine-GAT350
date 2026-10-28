@@ -10,6 +10,8 @@
 #include "Renderer/VertexBuffer.h"
 #include "Renderer/Pipeline.h"
 
+#define CHECK_UNIFORM_BOUNDARY(T) static_assert((sizeof(T) % 16) == 0);
+
 using namespace nu;
 using namespace std;
 
@@ -33,11 +35,13 @@ struct LightUniform {
 	glm::vec3 position;
 	LightType type;
 	glm::vec3 direction;
-	float innerCutoff;
+	float range;
 	glm::vec3 color;
 	float intensity;
 	glm::vec3 ambient;
+	float innerCutoff;
 	float outerCutoff;
+	glm::vec3 pad1;
 };
 
 glm::float4 colour{ 0,0,0,1 };
@@ -47,6 +51,7 @@ struct MaterialUniform {
 	glm::vec2 tiling;
 	glm::vec2 offset;
 	float shininess;
+	glm::vec3 pad1;
 };
 
 MaterialUniform materialUniform{
@@ -60,12 +65,19 @@ LightUniform lightUniform{
 	.position{10, 10, -10},
 	.type{LightType::DIRECTIONAL},
 	.direction{0, -1, 0},
-	.innerCutoff{0.2f},
+	.range{80},
 	.color{1.0f, 0.9f, 0.7f},
 	.intensity{0.9f},
 	.ambient{0.2f},
-	.outerCutoff{0.4f}
+	.innerCutoff{0.2f},
+	.outerCutoff{0.4f},
 };
+
+// size in bytes needs to be divisible by 16
+// padding is just filler data
+CHECK_UNIFORM_BOUNDARY(LightUniform)
+CHECK_UNIFORM_BOUNDARY(VertexUniform)
+CHECK_UNIFORM_BOUNDARY(MaterialUniform)
 
 std::vector<uint32_t> indices = { 0, 1, 2, 2, 3, 0 };
 
@@ -79,8 +91,8 @@ int main()
 	auto model = Resources().Get<Model>("Models/spot.obj", Engine::Get().GetRenderer());
 	auto texture = Resources().Get<Texture>("Textures/spot_diffuse.png", Engine::Get().GetRenderer());
 
-	auto vshader = Resources().Get<nu::Shader>("shaders/goraud.vert", Engine::Get().GetRenderer(), 3);
-	auto fshader = Resources().Get<nu::Shader>("shaders/goraud.frag", Engine::Get().GetRenderer(), 1, 1);
+	auto vshader = Resources().Get<nu::Shader>("shaders/phong.vert", Engine::Get().GetRenderer(), 3);
+	auto fshader = Resources().Get<nu::Shader>("shaders/phong.frag", Engine::Get().GetRenderer(), 3, 1);
 
 	auto pipeline = std::make_shared<Pipeline>();
 
@@ -133,7 +145,9 @@ int main()
 		if (Engine::Get().GetInput().GetKeyPressed(SDL_SCANCODE_3)) {
 			lightUniform.type = LightType::SPOT;
 			lightUniform.position = glm::vec3{ 0, 2, 0 };
-			lightUniform.direction = { 0, 1, 0 };
+			lightUniform.innerCutoff = glm::cos(glm::radians(10.0f));
+			lightUniform.outerCutoff = glm::cos(glm::radians(20.0f));
+			
 		}
 
 		vertexUniform.cameraPosition += direction * 4.0f * dt;
@@ -158,7 +172,9 @@ int main()
 		Engine::Get().GetRenderer().SetVertexUniform(1, &lightUniform, sizeof(lightUniform));
 		Engine::Get().GetRenderer().SetVertexUniform(2, &materialUniform, sizeof(materialUniform));
 
-		Engine::Get().GetRenderer().SetFragmentUniform(0, &materialUniform, sizeof(colour));
+		Engine::Get().GetRenderer().SetFragmentUniform(0, &vertexUniform, sizeof(vertexUniform));
+		Engine::Get().GetRenderer().SetFragmentUniform(1, &lightUniform, sizeof(lightUniform));
+		Engine::Get().GetRenderer().SetFragmentUniform(2, &materialUniform, sizeof(materialUniform));
 		Engine::Get().GetRenderer().SetFragmentTexture(0, *texture);
 
 		model->Draw(Engine::Get().GetRenderer());
