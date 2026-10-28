@@ -3,7 +3,6 @@
 #include <iostream>
 #include <vector>
 #include <random>
-#include <vector>
 #include <map>
 #include <memory>
 #include "Renderer/IndexBuffer.h"
@@ -34,32 +33,38 @@ struct LightUniform {
 	glm::vec3 position;
 	LightType type;
 	glm::vec3 direction;
-	float pad1;
+	float innerCutoff;
 	glm::vec3 color;
 	float intensity;
 	glm::vec3 ambient;
-	float pad2;
+	float outerCutoff;
 };
 
 glm::float4 colour{ 0,0,0,1 };
 
 struct MaterialUniform {
+	glm::vec4 color;
 	glm::vec2 tiling;
 	glm::vec2 offset;
+	float shininess;
 };
 
 MaterialUniform materialUniform{
+	.color{1, 1, 1, 1},
 	.tiling{1.0f, 1.0f},
-	.offset{0.0f, 0.0f}
+	.offset{0.0f, 0.0f},
+	.shininess{32}
 };
 
 LightUniform lightUniform{
 	.position{10, 10, -10},
 	.type{LightType::DIRECTIONAL},
-	.direction{0,-1,0},
+	.direction{0, -1, 0},
+	.innerCutoff{0.2f},
 	.color{1.0f, 0.9f, 0.7f},
-	.intensity{1.0f},
-	.ambient{0.2f}
+	.intensity{0.9f},
+	.ambient{0.2f},
+	.outerCutoff{0.4f}
 };
 
 std::vector<uint32_t> indices = { 0, 1, 2, 2, 3, 0 };
@@ -122,23 +127,27 @@ int main()
 		if (Engine::Get().GetInput().GetKeyDown(SDL_SCANCODE_E)) direction.y = 1;
 
 		if (Engine::Get().GetInput().GetKeyPressed(SDL_SCANCODE_1)) 
-			lightUniform.type = (lightUniform.type == LightType::DIRECTIONAL ? LightType::POINT : LightType::DIRECTIONAL);
+			lightUniform.type = LightType::DIRECTIONAL;
+		if (Engine::Get().GetInput().GetKeyPressed(SDL_SCANCODE_2))
+			lightUniform.type = LightType::POINT;
+		if (Engine::Get().GetInput().GetKeyPressed(SDL_SCANCODE_3)) {
+			lightUniform.type = LightType::SPOT;
+			lightUniform.position = glm::vec3{ 0, 2, 0 };
+			lightUniform.direction = { 0, 1, 0 };
+		}
 
 		vertexUniform.cameraPosition += direction * 4.0f * dt;
-		//materialUniform.tiling = glm::vec2(sin(time) + 1, cos(time) + 1);
-
 		transform.rotation.y = Engine::Get().GetTime().GetTime() * 30.0f;
 
 		auto view = glm::lookAtRH(vertexUniform.cameraPosition, 
 			vertexUniform.cameraPosition + glm::vec3{ 0.0f, 0.0f, -1.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f });
 
 		float aspectRatio = Engine::Get().GetRenderer().GetWindowWidth() / Engine::Get().GetRenderer().GetWindowHeight();
-		auto projection = glm::perspective(glm::radians(100.0f), aspectRatio, 0.01f, 20.0f);
+		// FOV
+		auto projection = glm::perspective(glm::radians(80.0f), aspectRatio, 0.01f, 20.0f);
 
 		vertexUniform.model = transform.GetMatrix();
 		vertexUniform.mvp = projection * view * vertexUniform.model;
-
-		// cout << materialUniform.tiling.x << ", " << materialUniform.tiling.y << endl;
 
 		// == RENDERING ===
 
@@ -148,7 +157,8 @@ int main()
 		Engine::Get().GetRenderer().SetVertexUniform(0, &vertexUniform, sizeof(vertexUniform));
 		Engine::Get().GetRenderer().SetVertexUniform(1, &lightUniform, sizeof(lightUniform));
 		Engine::Get().GetRenderer().SetVertexUniform(2, &materialUniform, sizeof(materialUniform));
-		Engine::Get().GetRenderer().SetFragmentUniform(0, &colour, sizeof(colour));
+
+		Engine::Get().GetRenderer().SetFragmentUniform(0, &materialUniform, sizeof(colour));
 		Engine::Get().GetRenderer().SetFragmentTexture(0, *texture);
 
 		model->Draw(Engine::Get().GetRenderer());
