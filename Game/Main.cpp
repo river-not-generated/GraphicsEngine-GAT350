@@ -11,6 +11,7 @@
 #include "Renderer/Pipeline.h"
 
 #define CHECK_UNIFORM_BOUNDARY(T) static_assert((sizeof(T) % 16) == 0);
+#define MAX_LIGHTS 8
 
 using namespace nu;
 using namespace std;
@@ -31,7 +32,7 @@ struct VertexUniform {
 	float pad1;
 };
 
-struct LightUniform {
+struct Light {
 	glm::vec3 position;
 	LightType type;
 	glm::vec3 direction;
@@ -42,6 +43,13 @@ struct LightUniform {
 	float innerCutoff;
 	float outerCutoff;
 	glm::vec3 pad1;
+
+};
+
+struct LightUniform {
+	Light lights[MAX_LIGHTS];
+	uint32_t numLights;
+	glm::vec3 ambient;
 };
 
 glm::float4 colour{ 0,0,0,1 };
@@ -61,9 +69,10 @@ MaterialUniform materialUniform{
 	.shininess{32}
 };
 
-LightUniform lightUniform{
-	.position{10, 10, -10},
-	.type{LightType::DIRECTIONAL},
+
+Light light1{
+	.position{10, 2, 0},
+	.type{LightType::POINT},
 	.direction{0, -1, 0},
 	.range{80},
 	.color{1.0f, 0.9f, 0.7f},
@@ -73,13 +82,25 @@ LightUniform lightUniform{
 	.outerCutoff{0.4f},
 };
 
+
+Light light2{
+	.position{0, 2, 0},
+	.type{LightType::POINT},
+	.direction{0, -1, 0},
+	.range{80},
+	.color{1.0f, 0.0f, 0.0f},
+	.intensity{0.9f},
+	.ambient{0.2f},
+	.innerCutoff{0.2f},
+	.outerCutoff{0.4f},
+};
+
+
 // size in bytes needs to be divisible by 16
 // padding is just filler data
 CHECK_UNIFORM_BOUNDARY(LightUniform)
 CHECK_UNIFORM_BOUNDARY(VertexUniform)
 CHECK_UNIFORM_BOUNDARY(MaterialUniform)
-
-std::vector<uint32_t> indices = { 0, 1, 2, 2, 3, 0 };
 
 int main()
 {   
@@ -88,8 +109,8 @@ int main()
 	// initialize the engine
 	if (Engine::Get().Initialize(WIN_WIDTH, WIN_HEIGHT) == false) return 0;
 
-	auto model = Resources().Get<Model>("Models/spot.obj", Engine::Get().GetRenderer());
-	auto texture = Resources().Get<Texture>("Textures/spot_diffuse.png", Engine::Get().GetRenderer());
+	auto model = Resources().Get<Model>("Models/sphere.obj", Engine::Get().GetRenderer());
+	auto texture = Resources().Get<Texture>("Textures/brick_diffuse.png", Engine::Get().GetRenderer());
 
 	auto vshader = Resources().Get<nu::Shader>("shaders/phong.vert", Engine::Get().GetRenderer(), 3);
 	auto fshader = Resources().Get<nu::Shader>("shaders/phong.frag", Engine::Get().GetRenderer(), 3, 1);
@@ -107,10 +128,17 @@ int main()
 		Engine::Get().GetRenderer().GetWindow());
 
 	VertexUniform vertexUniform;
-	vertexUniform.cameraPosition = { 0.0f, 0.5f, 2.0f };
-	float rotation = 0.0f;
+	vertexUniform.cameraPosition = { 0.0f, 2.0f, 8.0f };
 
 	Transform transform;
+	transform.scale = glm::vec3{ 4.0f };
+
+	LightUniform lightUniform;
+
+	lightUniform.lights[0] = light1;
+	lightUniform.lights[1] = light2;
+	lightUniform.numLights = 2;
+	lightUniform.ambient = glm::vec3{ 0.2f };
 
 	bool quit = false;
 	while (!quit) {
@@ -139,19 +167,18 @@ int main()
 		if (Engine::Get().GetInput().GetKeyDown(SDL_SCANCODE_E)) direction.y = 1;
 
 		if (Engine::Get().GetInput().GetKeyPressed(SDL_SCANCODE_1)) 
-			lightUniform.type = LightType::DIRECTIONAL;
+			light1.type = LightType::DIRECTIONAL;
 		if (Engine::Get().GetInput().GetKeyPressed(SDL_SCANCODE_2))
-			lightUniform.type = LightType::POINT;
+			light1.type = LightType::POINT;
 		if (Engine::Get().GetInput().GetKeyPressed(SDL_SCANCODE_3)) {
-			lightUniform.type = LightType::SPOT;
-			lightUniform.position = glm::vec3{ 0, 2, 0 };
-			lightUniform.innerCutoff = glm::cos(glm::radians(10.0f));
-			lightUniform.outerCutoff = glm::cos(glm::radians(20.0f));
-			
+			light1.type = LightType::SPOT;
+			light1.innerCutoff = glm::cos(glm::radians(10.0f));
+			light1.outerCutoff = glm::cos(glm::radians(40.0f));
 		}
 
 		vertexUniform.cameraPosition += direction * 4.0f * dt;
-		transform.rotation.y = Engine::Get().GetTime().GetTime() * 30.0f;
+
+		lightUniform.lights[1].position = glm::eulerAngleY(time * 4) * glm::vec4{ 0, 0, 10, 1 };
 
 		auto view = glm::lookAtRH(vertexUniform.cameraPosition, 
 			vertexUniform.cameraPosition + glm::vec3{ 0.0f, 0.0f, -1.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f });
