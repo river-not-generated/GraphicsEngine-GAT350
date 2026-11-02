@@ -32,7 +32,6 @@
 #include <SDL3_ttf/SDL_ttf.h>
 #include <fmod.hpp>
 #include <fmod_errors.h>
-#include <box2d/box2d.h>
 #include <rapidjson/istreamwrapper.h>
 #include <rapidjson/error/en.h>
 #include <glm/glm.hpp>
